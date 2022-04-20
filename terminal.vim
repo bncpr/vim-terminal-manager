@@ -1,21 +1,24 @@
 noremap <space>t :call <SID>TerminalToggle()<CR>
 
-let g:is_open_terminal = 0
-let g:terminal_bufnr = 0
+let g:terminal_height = 12
+
+let s:is_open_terminal = 0
+let s:terminal_bufnr = 0
 
 function! s:TerminalToggle()
-	if g:is_open_terminal
-		let g:is_open_terminal = 0
+	if s:is_open_terminal
+		let s:is_open_terminal = 0
+		" TODO: check if buffer is open
 		silent hide
 	else
 		botright split
-		resize 12
-		if g:terminal_bufnr == 0
+		execute "resize" g:terminal_height
+		if s:terminal_bufnr == 0
 			term
-			let g:terminal_bufnr = bufnr()
+			let s:terminal_bufnr = bufnr()
 		else
-			execute "buffer" . g:terminal_bufnr
+			execute "buffer" s:terminal_bufnr
 		endif
-		let g:is_open_terminal = 1
+		let s:is_open_terminal = 1
 	endif
 endfunction
