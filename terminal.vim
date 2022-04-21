@@ -15,10 +15,11 @@ noremap <SID>ToggleAutoInsert :call <SID>ToggleAutoInsert()<cr>
 " }}}
 
 let g:terminal_height = 12
-let g:terminal_auto_insert_mode = 1
+let g:terminal_auto_insert_mode = 0
 
 let s:terminal_height = 0
 let s:is_open_terminal = 0
+let s:prev_window = 0
 let s:term_name = ""
 
 augroup terminal
@@ -37,11 +38,16 @@ function! s:ToggleOpen()
 	if s:is_open_terminal
 		let s:term_bufwinnr = bufwinnr(s:term_name)
 		if s:term_bufwinnr != -1
+			if winnr() != s:term_bufwinnr
+				let s:prev_window = winnr()
+			endif
 			let s:terminal_height = winheight(s:term_bufwinnr)
 			execute s:term_bufwinnr "wincmd c"
+			execute s:prev_window "wincmd w"
 		endif
 		let s:is_open_terminal = 0
 	else
+		let s:prev_window = winnr()
 		botright split
 		call s:OpenTerminalBuffer()
 		if !s:terminal_height
@@ -67,9 +73,5 @@ function! s:OpenTerminalBuffer()
 endfunction
 
 function! s:ToggleAutoInsert()
-	if g:terminal_auto_insert_mode
-		let g:terminal_auto_insert_mode = 0
-	else
-		let g:terminal_auto_insert_mode = 1
-	endif
+	let g:terminal_auto_insert_mode = !g:terminal_auto_insert_mode
 endfunction
