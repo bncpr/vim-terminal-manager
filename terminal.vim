@@ -23,18 +23,17 @@ augroup terminal
 augroup END
 
 function! s:ToggleFocus()
-	echom "ToggleFocus: not implemented"
+	" if !s:is_open_terminal
+		" call s:ToggleOpen()
+	" endif
 endfunction
 
 function! s:ToggleOpen()
 	if s:is_open_terminal
-		let s:term_bufwinid = bufwinid(s:term_name)
-		if s:term_bufwinid != -1
-			let s:term_bufwinnr = win_id2win(s:term_bufwinid)
-			if s:term_bufwinnr
-				let s:terminal_height = winheight(s:term_bufwinnr)
-				execute s:term_bufwinnr "wincmd c"
-			endif
+		let s:term_bufwinnr = bufwinnr(s:term_name)
+		if s:term_bufwinnr != -1
+			let s:terminal_height = winheight(s:term_bufwinnr)
+			execute s:term_bufwinnr "wincmd c"
 		endif
 		let s:is_open_terminal = 0
 	else
