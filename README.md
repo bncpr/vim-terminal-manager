@@ -1,3 +1,3 @@
-# vim-terminal
+# vim-terminal-manager
 
-A script to manage vim/neovim's :terminal.
+A plugin to manage vim/neovim's :terminal.
