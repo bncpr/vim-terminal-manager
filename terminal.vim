@@ -1,4 +1,8 @@
-noremap <space>t :call <SID>TerminalToggle()<CR>
+if !hasmapto('<Plug>TerminalToggle')
+	map <unique> <space>t <Plug>TerminalToggle
+endif
+noremap <unique> <script> <Plug>TerminalToggle <SID>Toggle
+noremap <SID>Toggle :call <SID>Toggle()<cr>
 
 let g:terminal_height = 12
 
@@ -10,7 +14,7 @@ augroup terminal
 	" autocmd TermOpen * echom bufname()
 augroup END
 
-function! s:TerminalToggle()
+function! s:Toggle()
 	if s:is_open_terminal
 		let s:term_bufwinid = bufwinid(s:term_name)
 		if s:term_bufwinid != -1
@@ -27,7 +31,7 @@ function! s:TerminalToggle()
 			term
 			setlocal bufhidden=hide
 			let s:term_name = bufname()
-			echom s:term_name
+			" echom s:term_name
 		else
 			execute "buffer" s:term_name
 		endif
