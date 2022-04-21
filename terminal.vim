@@ -3,7 +3,7 @@ if !hasmapto('<Plug>TerminalToggleOpen')
 	map <unique> <space>t <Plug>TerminalToggleOpen
 endif
 if !hasmapto('<Plug>TerminalToggleFocus')
-	map <unique> <space>t <Plug>TerminalToggleFocus
+	map <unique> <leader>t <Plug>TerminalToggleFocus
 endif
 noremap <unique> <script> <Plug>TerminalToggleOpen <SID>ToggleOpen
 noremap <unique> <script> <Plug>TerminalToggleFocus <SID>ToggleFocus
@@ -20,6 +20,10 @@ augroup terminal
 	autocmd!
 	" autocmd TermOpen * echom bufname()
 augroup END
+
+function! s:ToggleFocus()
+	echom "ToggleFocus: not implemented"
+endfunction
 
 function! s:ToggleOpen()
 	if s:is_open_terminal
