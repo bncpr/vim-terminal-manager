@@ -1,8 +1,15 @@
-if !hasmapto('<Plug>TerminalToggle')
-	map <unique> <space>t <Plug>TerminalToggle
+" Mappings {{{
+if !hasmapto('<Plug>TerminalToggleOpen')
+	map <unique> <space>t <Plug>TerminalToggleOpen
 endif
-noremap <unique> <script> <Plug>TerminalToggle <SID>Toggle
-noremap <SID>Toggle :call <SID>Toggle()<cr>
+if !hasmapto('<Plug>TerminalToggleFocus')
+	map <unique> <space>t <Plug>TerminalToggleFocus
+endif
+noremap <unique> <script> <Plug>TerminalToggleOpen <SID>ToggleOpen
+noremap <unique> <script> <Plug>TerminalToggleFocus <SID>ToggleFocus
+noremap <SID>ToggleOpen :call <SID>ToggleOpen()<cr>
+noremap <SID>ToggleFocus :call <SID>ToggleFocus()<cr>
+" }}}
 
 let g:terminal_height = 12
 
@@ -14,7 +21,7 @@ augroup terminal
 	" autocmd TermOpen * echom bufname()
 augroup END
 
-function! s:Toggle()
+function! s:ToggleOpen()
 	if s:is_open_terminal
 		let s:term_bufwinid = bufwinid(s:term_name)
 		if s:term_bufwinid != -1
