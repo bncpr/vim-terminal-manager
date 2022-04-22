@@ -24,26 +24,18 @@ let s:term_name = ""
 
 augroup terminal
 	autocmd!
-	autocmd BufWinEnter * call s:TerminalEnter()
-	autocmd BufWinLeave * call s:TerminalLeave()
+	autocmd BufWinEnter * call s:TerminalEnterAucmd()
+	autocmd BufWinLeave * call s:TerminalLeaveAucmd()
 augroup END
 
-function! s:TerminalEnter()
-	if s:term_name ==# expand("<afile>")
-		let s:is_open_terminal = 1
-		if !s:terminal_height
-			let s:terminal_height = g:terminal_height
-		endif
-		execute "resize" s:terminal_height
-		let s:is_open_terminal = 1
-		if g:terminal_auto_insert_mode
-			startinsert
-		endif
+function! s:TerminalEnterAucmd()
+	if s:term_name ==# expand("<afile>") && s:term_name != ""
+		call s:UpdateTerminalOnOpen()
 	endif
 endfunction
 
-function! s:TerminalLeave()
-	if s:term_name ==# expand("<afile>")
+function! s:TerminalLeaveAucmd()
+	if s:term_name ==# expand("<afile>") && s:term_name != ""
 		let s:is_open_terminal = 0
 		let s:term_bufwinnr = bufwinnr(s:term_name)
 		let s:terminal_height = winheight(s:term_bufwinnr)
@@ -77,10 +69,28 @@ endfunction
 function! s:OpenTerminalBuffer()
 	if s:term_name == ""
 		term
-		setlocal bufhidden=hide
-		let s:term_name = bufname()
+		call s:InitTerminal()
 	else
 		execute "buffer" s:term_name
+	endif
+endfunction
+
+function! s:InitTerminal()
+	setlocal bufhidden=hide
+	let s:term_name = bufname()
+	if !s:terminal_height
+		let s:terminal_height = g:terminal_height
+	endif
+	" Call UpdateTerminalOnOpen because the autocmd seems to happen before
+	" InitTerminal
+	call s:UpdateTerminalOnOpen()
+endfunction
+
+function! s:UpdateTerminalOnOpen()
+	let s:is_open_terminal = 1
+	execute "resize" s:terminal_height
+	if g:terminal_auto_insert_mode
+		startinsert
 	endif
 endfunction
 
