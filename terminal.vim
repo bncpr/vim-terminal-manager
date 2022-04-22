@@ -24,7 +24,6 @@ let s:term_name = ""
 
 augroup terminal
 	autocmd!
-	" autocmd TermOpen * echom bufname()
 	autocmd BufWinEnter * call s:TerminalEnter()
 	autocmd BufWinLeave * call s:TerminalLeave()
 augroup END
@@ -52,10 +51,12 @@ function! s:TerminalLeave()
 endfunction
 
 function! s:ToggleFocus()
-	echom "Not Implemented"
-	" if !s:is_open_terminal
-		" call s:ToggleOpen()
-	" endif
+	if !s:is_open_terminal
+		call s:ToggleOpen()
+	else
+		let s:prev_window = winnr()
+		execute bufwinnr(s:term_name) "wincmd w"
+	endif
 endfunction
 
 function! s:ToggleOpen()
