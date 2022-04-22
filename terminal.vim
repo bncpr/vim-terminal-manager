@@ -25,7 +25,31 @@ let s:term_name = ""
 augroup terminal
 	autocmd!
 	" autocmd TermOpen * echom bufname()
+	autocmd BufWinEnter * call s:TerminalEnter()
+	autocmd BufWinLeave * call s:TerminalLeave()
 augroup END
+
+function! s:TerminalEnter()
+	if s:term_name ==# expand("<afile>")
+		let s:is_open_terminal = 1
+		if !s:terminal_height
+			let s:terminal_height = g:terminal_height
+		endif
+		execute "resize" s:terminal_height
+		let s:is_open_terminal = 1
+		if g:terminal_auto_insert_mode
+			startinsert
+		endif
+	endif
+endfunction
+
+function! s:TerminalLeave()
+	if s:term_name ==# expand("<afile>")
+		let s:is_open_terminal = 0
+		let s:term_bufwinnr = bufwinnr(s:term_name)
+		let s:terminal_height = winheight(s:term_bufwinnr)
+	endif
+endfunction
 
 function! s:ToggleFocus()
 	echom "Not Implemented"
@@ -36,28 +60,15 @@ endfunction
 
 function! s:ToggleOpen()
 	if s:is_open_terminal
-		let s:term_bufwinnr = bufwinnr(s:term_name)
-		if s:term_bufwinnr != -1
-			if winnr() != s:term_bufwinnr
-				let s:prev_window = winnr()
-			endif
-			let s:terminal_height = winheight(s:term_bufwinnr)
-			execute s:term_bufwinnr "wincmd c"
-			execute s:prev_window "wincmd w"
+		if winnr() != bufwinnr(s:term_name)
+			let s:prev_window = winnr()
 		endif
-		let s:is_open_terminal = 0
+		execute bufwinnr(s:term_name) "wincmd c"
+		execute s:prev_window "wincmd w"
 	else
 		let s:prev_window = winnr()
 		botright split
 		call s:OpenTerminalBuffer()
-		if !s:terminal_height
-			let s:terminal_height = g:terminal_height
-		endif
-		execute "resize" s:terminal_height
-		let s:is_open_terminal = 1
-		if g:terminal_auto_insert_mode
-			startinsert
-		endif
 	endif
 endfunction
 
